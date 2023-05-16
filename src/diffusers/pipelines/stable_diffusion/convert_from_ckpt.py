@@ -46,6 +46,7 @@ from diffusers import (
     PriorTransformer,
     StableDiffusionControlNetPipeline,
     StableDiffusionPipeline,
+    StableDiffusionImg2ImgPipeline,
     StableUnCLIPImg2ImgPipeline,
     StableUnCLIPPipeline,
     UnCLIPScheduler,
@@ -55,7 +56,7 @@ from diffusers.pipelines.latent_diffusion.pipeline_latent_diffusion import LDMBe
 from diffusers.pipelines.paint_by_example import PaintByExampleImageEncoder, PaintByExamplePipeline
 from diffusers.pipelines.stable_diffusion import StableDiffusionSafetyChecker
 from diffusers.pipelines.stable_diffusion.stable_unclip_image_normalizer import StableUnCLIPImageNormalizer
-
+from ..pipeline_utils import DiffusionPipeline
 from ...utils import is_omegaconf_available, is_safetensors_available, logging
 from ...utils.import_utils import BACKENDS_MAPPING
 
@@ -990,7 +991,8 @@ def download_from_original_stable_diffusion_ckpt(
     clip_stats_path: Optional[str] = None,
     controlnet: Optional[bool] = None,
     load_safety_checker: bool = True,
-) -> StableDiffusionPipeline:
+    is_img2img: bool = False
+) -> DiffusionPipeline:
     """
     Load a Stable Diffusion pipeline object from a CompVis-style `.ckpt`/`.safetensors` file and (ideally) a `.yaml`
     config file.
@@ -1292,8 +1294,18 @@ def download_from_original_stable_diffusion_ckpt(
                 safety_checker=safety_checker,
                 feature_extractor=feature_extractor,
             )
-        else:
+        elif is_img2img==False:
             pipe = StableDiffusionPipeline(
+                vae=vae,
+                text_encoder=text_model,
+                tokenizer=tokenizer,
+                unet=unet,
+                scheduler=scheduler,
+                safety_checker=safety_checker,
+                feature_extractor=feature_extractor,
+            )
+        else:
+            pipe = StableDiffusionImg2ImgPipeline(
                 vae=vae,
                 text_encoder=text_model,
                 tokenizer=tokenizer,
