@@ -1195,16 +1195,26 @@ def download_from_original_stable_diffusion_ckpt(
                     requires_safety_checker=False,
                 )
             else:
-                pipe = StableDiffusionPipeline(
-                    vae=vae,
-                    text_encoder=text_model,
-                    tokenizer=tokenizer,
-                    unet=unet,
-                    scheduler=scheduler,
-                    safety_checker=None,
-                    feature_extractor=None,
-                    requires_safety_checker=False,
-                )
+                if is_img2img==False:
+                    pipe = StableDiffusionPipeline(
+                        vae=vae,
+                        text_encoder=text_model,
+                        tokenizer=tokenizer,
+                        unet=unet,
+                        scheduler=scheduler,
+                        safety_checker=safety_checker,
+                        feature_extractoZr=feature_extractor,
+                    )
+                else:
+                    pipe = StableDiffusionImg2ImgPipeline(
+                        vae=vae,
+                        text_encoder=text_model,
+                        tokenizer=tokenizer,
+                        unet=unet,
+                        scheduler=scheduler,
+                        safety_checker=safety_checker,
+                        feature_extractor=feature_extractor,
+                    )
         else:
             image_normalizer, image_noising_scheduler = stable_unclip_image_noising_components(
                 original_config, clip_stats_path=clip_stats_path, device=device
