@@ -329,6 +329,13 @@ class StableDiffusionPipeline(DiffusionPipeline, TextualInversionLoaderMixin):
             )
             text_input_ids = text_inputs.input_ids
             untruncated_ids = self.tokenizer(prompt, padding="longest", return_tensors="pt").input_ids
+            
+            '''         def chunk_list(input_list, chunk_size):
+                            # This will list of all sublists of size chunk_size
+                            return [input_list[i:i + chunk_size] for i in range(0, len(input_list), chunk_size)]
+                        
+                        text_input_ids = chunk_list(text_input_ids, 8)
+            '''
 
             if untruncated_ids.shape[-1] >= text_input_ids.shape[-1] and not torch.equal(
                 text_input_ids, untruncated_ids
